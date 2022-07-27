@@ -1,0 +1,78 @@
+<form [formGroup]="form" novalidate>
+  <ng-container>
+    <fieldset class="Department">
+      <ng-container formArrayName="peopleAges">
+        <fieldset class="PeopleAges">
+          <legend>
+            People ages (arrays with numbers as property of object)
+          </legend>
+          <ng-container
+            *ngFor="let peopleAge of peopleAges.controls; let i = index"
+          >
+            <fieldset [formGroupName]="i.toString()" class="PeopleAges-item">
+              <legend>People age #{{ i }}</legend>
+              <input formControlName="age" />
+              <button (click)="deletePeopleAge(i)">delete</button>
+              <br />
+              <span
+                class="error"
+                style="color: red"
+                *ngIf="
+                  form.getClassValidatorErrors(
+                    peopleAges.get(i.toString())!.get('age')!,
+                    true
+                  ) | async as errorMessages
+                "
+              >
+                {{ errorMessages?.messages }}
+              </span>
+            </fieldset>
+          </ng-container>
+          <span
+            class="error"
+            style="color: red"
+            *ngIf="
+              form.getClassValidatorErrors(peopleAges, true)
+                | async as errorMessages
+            "
+          >
+            {{ errorMessages?.messages }}
+          </span>
+          <fieldset class="PeopleAges-new">
+            <legend>New people age</legend>
+            <input
+              ngModel
+              #peopleAgeNumber="ngModel"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <button
+              (click)="
+                addPeopleAge({ age: peopleAgeNumber.value });
+                peopleAgeNumber.control.setValue('')
+              "
+            >
+              add
+            </button>
+          </fieldset>
+        </fieldset>
+      </ng-container>
+    </fieldset>
+    <p>
+      Form status: <span class="form-status">{{ form.status | json }}</span>
+    </p>
+    <p>
+      Form values:
+      <span class="form-values">{{ form.valueChanges | async | json }}</span>
+    </p>
+    <p *ngIf="savedItem$ | async as savedItem">
+      Saved item:
+      <span class="form-saved-item">{{ savedItem | json }}</span>
+    </p>
+    <button class="onLoadClick" (click)="onLoadClick()">Load</button>
+    <button class="onClearClick" (click)="onClearClick()">Clear</button>
+    <button class="onSaveClick" (click)="onSaveClick()">Save</button>
+    <br />
+ 
+
+  </ng-container>
+</form>
